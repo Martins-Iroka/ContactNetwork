@@ -9,8 +9,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private Cursor mCursor;
     private List<String> mContacts;
     private ListView mListView;
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +30,28 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mListView = findViewById(R.id.list_view);
+
+        mSearchView = findViewById(R.id.search_view);
         mContacts = new ArrayList<>();
 
-        ListAdapter adapter = new ArrayAdapter<>(
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_list_item_1, mContacts
         );
         mListView.setAdapter(adapter);
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                String text = newText;
+                adapter.getFilter().filter(text);
+                return false;
+            }
+        });
 
         setPermissionRequestContacts();
     }
